@@ -8,6 +8,7 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { cache } from 'react';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -49,6 +50,30 @@ export async function fetchLatestInvoices() {
     throw new Error('Failed to fetch the latest invoices.');
   }
 }
+// export const fetchLatestInvoices = cache(async () => {
+//   try {
+//     const data = await sql<LatestInvoiceRaw[]>`
+//     SELECT DISTINCT ON (customers.id)
+//       invoices.amount,
+//       customers.name,
+//       customers.image_url,
+//       customers.email,
+//       invoices.id
+//     FROM invoices
+//     JOIN customers ON invoices.customer_id = customers.id
+//     ORDER BY customers.id, invoices.date DESC
+//     LIMIT 5;
+//   `;
+//     console.log("run DB");
+//     return data.map(invoice => ({
+//       ...invoice,
+//       amount: formatCurrency(invoice.amount),
+//     }));
+//   } catch (e) {
+//     console.error('Database Error:', e);
+//     throw new Error('Failed to fetch the latest invoices.');
+//   }
+// });
 
 export async function fetchCardData() {
   try {
